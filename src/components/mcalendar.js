@@ -18,6 +18,26 @@ var mcalendarnav = {
         '</b-form-select>' +
         '<b-button @click="increment">Next</b-button>' +
       '</div>' +
+      '<div>' +
+        '<b-form-group label="Start Day Of Week">' +
+          '<b-form-radio-group ' +
+            'v-model="dow" ' +
+            ':options="dowoptions" ' +
+            'buttons ' +
+            'button-variant="outline-primary" ' +
+            '@change="dowchanged"' +
+          '/>' +
+        '</b-form-group>' +
+      '</div>' +
+      '<div>' +
+        '<b-form-checkbox ' +
+          'v-model="showoutofmonth" ' +
+          'switch ' +
+          '@change="showoutofmonthchanged"' +
+        '>' +
+          'Show dates of previous/next month' +
+        '</b-form-checkbox>' +
+      '</div>' +
     '</div>',
   data () {
     return {
@@ -25,7 +45,17 @@ var mcalendarnav = {
       month: 1,
       yearoptions: [],
       monthoptions: [],
-      dow: 1
+      dow: 0,
+      showoutofmonth: true,
+      dowoptions: [
+        { text: 'Sun', value: 0 },
+        { text: 'Mon', value: 1 },
+        { text: 'Tue', value: 2 },
+        { text: 'Wed', value: 3 },
+        { text: 'Thu', value: 4 },
+        { text: 'Fri', value: 5 },
+        { text: 'Sat', value: 6 }
+      ]
     }
   },
   mounted () {
@@ -70,6 +100,10 @@ var mcalendarnav = {
     dowchanged () {
       console.log('dowchanged: ' + this.dow);
       this.$emit('dowchanged', this.dow);
+    },
+    showoutofmonthchanged () {
+      var val = this.showoutofmonth;
+      this.$emit('showoutofmonthchanged', val);
     }
   }
 };
@@ -80,7 +114,8 @@ var mcalendartablecell = {
     offset: { type: Number, required: true },
     lastdate: { type: Number, required: true },
     lastdateofprevmonth: { type: Number, required: true },
-    dow: { type: Object, default: function () { return { key: 0, val: 0 } } }
+    dow: { type: Object, default: function () { return { key: 0, val: 0 } } },
+    showoutofmonth: { type: Boolean, default: true }
   },
   template: '' +
     '<div ' +
@@ -88,7 +123,7 @@ var mcalendartablecell = {
       'class="mcalendar-table-cell" ' +
       ':class="[{ outofmonth: isoutofmonth }, { lastrow: islastrow }]"' +
     '>' +
-      '<div>' +
+      '<div v-if="! isoutofmonth || showoutofmonth">' +
         '<div>' +
           '<span class="date" :class="datecolorclass">{{ displaydate }}</span>' +
         '</div>' +
@@ -127,6 +162,7 @@ var mcalendartable = {
     firstdayofweek: { type: Number, required: true },
     lastdate: { type: Number, required: true },
     lastdateofprevmonth: { type: Number, required: true },
+    showoutofmonth: { type: Boolean, default: true }
   },
   template: '' +
     '<div>' +
@@ -146,7 +182,8 @@ var mcalendartable = {
           ':offset="offset" ' +
           ':lastdate="lastdate" ' +
           ':lastdateofprevmonth="lastdateofprevmonth" ' +
-          ':dow="dowheader[i % 7]"' +
+          ':dow="dowheader[i % 7]" ' +
+          ':showoutofmonth="showoutofmonth"' +
         '></mcalendar-table-cell>' +
       '</div>' +
     '</div>',
@@ -169,14 +206,16 @@ var mcalendar = {
       '<mcalendar-nav ' +
         ':startyear="startyear" ' +
         '@monthchanged="monthchanged" ' +
-        '@dowchanged="dowchanged"' +
+        '@dowchanged="dowchanged" ' +
+        '@showoutofmonthchanged="showoutofmonthchanged"' +
       '></mcalendar-nav>' +
       '<mcalendar-table ' +
         ':dowheader="dowheader" ' +
         ':offset="offset" ' +
         ':firstdayofweek="firstdayofweek" ' +
         ':lastdate="lastdate" ' +
-        ':lastdateofprevmonth="lastdateofprevmonth"' +
+        ':lastdateofprevmonth="lastdateofprevmonth" ' +
+        ':showoutofmonth="showoutofmonth"' +
       '></mcalendar-table>' +
     '</div>',
   components: {
@@ -192,7 +231,8 @@ var mcalendar = {
       firstdayofweek: 0,
       lastdate: 30,
       lastdateofprevmonth: 30,
-      begindow: 0
+      begindow: 0,
+      showoutofmonth: true
     }
   },
   methods: {
@@ -217,6 +257,9 @@ var mcalendar = {
         this.dowheader.push({ key: i, val: dowheader[i] })
       }
       console.log('dowheader' + JSON.stringify(this.dowheader));
+    },
+    showoutofmonthchanged (val) {
+      this.showoutofmonth = val;
     }
   }
 };

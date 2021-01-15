@@ -24,6 +24,7 @@
 
 .mcalendar-table-cell {
   display: inline-block;
+  vertical-align: top;
   width: 14.25%;
   height: 30px;
   text-align: center;
