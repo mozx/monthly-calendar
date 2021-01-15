@@ -30,5 +30,26 @@
   border-bottom: 1px solid #333333;
 }
 
-
+.dow0 {
+  color: #F75555;
+}
+.dow1, .dow2, .dow3, .dow4, .dow5 {
+  color: #330000;
+}
+.dow6 {
+  color: #5555F7;
+}
+.outofmonth .dow0 {
+  color: #F7AAAA;
+}
+.outofmonth .dow1,
+.outofmonth .dow2,
+.outofmonth .dow3,
+.outofmonth .dow4,
+.outofmonth .dow5 {
+  color: #AAAAAA;
+}
+.outofmonth .dow6 {
+  color: #AAAAF7;
+}
 

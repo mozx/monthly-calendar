@@ -25,6 +25,7 @@ var mcalendarnav = {
       month: 1,
       yearoptions: [],
       monthoptions: [],
+      dow: 1
     }
   },
   mounted () {
@@ -40,6 +41,7 @@ var mcalendarnav = {
       this.monthoptions.push({ value: m, text: m.toString() });
     }
     this.changed();
+    this.dowchanged();
   },
   methods: {
     increment () {
@@ -64,6 +66,10 @@ var mcalendarnav = {
     changed () {
       console.log('monthchanged: ' + this.year + '-' + this.month);
       this.$emit('monthchanged', { year: this.year, month: this.month });
+    },
+    dowchanged () {
+      console.log('dowchanged: ' + this.dow);
+      this.$emit('dowchanged', this.dow);
     }
   }
 };
@@ -73,7 +79,8 @@ var mcalendartablecell = {
     index: { type: Number, required: true },
     offset: { type: Number, required: true },
     lastdate: { type: Number, required: true },
-    lastdateofprevmonth: { type: Number, required: true }
+    lastdateofprevmonth: { type: Number, required: true },
+    dow: { type: Object, default: function () { return { key: 0, val: 0 } } }
   },
   template: '' +
     '<div ' +
@@ -83,7 +90,7 @@ var mcalendartablecell = {
     '>' +
       '<div>' +
         '<div>' +
-          '<span class="date">{{ displaydate }}</span>' +
+          '<span class="date" :class="datecolorclass">{{ displaydate }}</span>' +
         '</div>' +
       '</div>' +
     '</div>',
@@ -98,10 +105,11 @@ var mcalendartablecell = {
     isoutofmonth () {
       return ((this.index + this.offset) <= 0 || this.lastdate < (this.index + this.offset));
     },
+    datecolorclass () {
+      return 'dow' + this.dow.val;
+    },
     displaydate () {
       var dispdate = this.index + this.offset;
-      console.log(this.index);
-      console.log(this.offset);
       if (dispdate <= 0) {
         dispdate += this.lastdateofprevmonth;
       } else if (this.lastdate < dispdate) {
@@ -114,6 +122,7 @@ var mcalendartablecell = {
 
 var mcalendartable = {
   props: {
+    dowheader: { type: Array, required: true },
     offset: { type: Number, required: true },
     firstdayofweek: { type: Number, required: true },
     lastdate: { type: Number, required: true },
@@ -122,7 +131,7 @@ var mcalendartable = {
   template: '' +
     '<div>' +
       '<div ' +
-        'v-for="h in dowheader" ' +
+        'v-for="h in dowheaderlabel" ' +
         ':key="100 + h.key" ' +
         'class="dowheader"' +
       '>' +
@@ -135,8 +144,8 @@ var mcalendartable = {
           ':index="i" ' +
           ':offset="offset" ' +
           ':lastdate="lastdate" ' +
-          ':lastdateofprevmonth="lastdateofprevmonth"' +
-          'class="mcalendar-table-cell" ' +
+          ':lastdateofprevmonth="lastdateofprevmonth" ' +
+          ':dow="dowheader[i % 7]"' +
         '></mcalendar-table-cell>' +
       '</div>' +
     '</div>',
@@ -145,7 +154,7 @@ var mcalendartable = {
   },
   data: function () {
     return {
-      dowheader: [
+      dowheaderlabel: [
         { key: 0, val: 'Sun' },
         { key: 1, val: 'Mon' },
         { key: 2, val: 'Tue' },
@@ -166,10 +175,11 @@ var mcalendar = {
     '<div class="mcalendar">' +
       '<mcalendar-nav ' +
         ':startyear="startyear" ' +
-        'class="mcalendar-nav" ' +
-        '@monthchanged="monthchanged"' +
+        '@monthchanged="monthchanged" ' +
+        '@dowchanged="dowchanged"' +
       '></mcalendar-nav>' +
-      '<mcalendar-table class="mcalendar-table"' +
+      '<mcalendar-table ' +
+        ':dowheader="dowheader" ' +
         ':offset="offset" ' +
         ':firstdayofweek="firstdayofweek" ' +
         ':lastdate="lastdate" ' +
@@ -184,6 +194,7 @@ var mcalendar = {
     return {
       year: this.startyear,
       month: 1,
+      dowheader: [],
       offset: 0,
       firstdayofweek: 0,
       lastdate: 30,
@@ -204,6 +215,15 @@ var mcalendar = {
       self.lastdate = new Date(to.year, to.month, 0).getDate();
       self.firstdayofweek = new Date(to.year, to.month - 1, 1).getDay();
       self.offset = ((self.begindow > self.firstdayofweek) ? -7 : 0) + (self.begindow - self.firstdayofweek) + 1;
+    },
+    dowchanged ( dow ) {
+      var dowindices = [0, 1, 2, 3, 4, 5, 6];
+      var dowheader = dowindices.slice(0, 7);
+      this.dowheader.length = 0;
+      for (var i = 0; i < 7; i += 1) {
+        this.dowheader.push({ key: i, val: dowheader[i] })
+      }
+      console.log('dowheader' + JSON.stringify(this.dowheader));
     }
   }
 };
