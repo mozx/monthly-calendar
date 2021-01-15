@@ -124,19 +124,17 @@ var mcalendartable = {
       '>' +
         '{{ h.val }}' +
       '</div>' +
-      '<p>offset: {{ offset }}</p>' +
-      '<p>firstdayofweek: {{ firstdayofweek }}</p>' +
-      '<p>lastdate: {{ lastdate }}</p>' +
-      '<p>lastdateofprevmonth: {{ lastdateofprevmonth }}</p>' +
-      '<mcalendar-table-cell ' +
-        'v-for="i in Array.from(Array(7 * 6), function (v, k) { return k })" ' +
-        ':key="i" ' +
-        ':index="i" ' +
-        ':offset="offset" ' +
-        ':lastdate="lastdate" ' +
-        ':lastdateofprevmonth="lastdateofprevmonth"' +
-        'class="mcalendar-table-cell" ' +
-      '></mcalendar-table-cell>' +
+      '<div>' +
+        '<mcalendar-table-cell ' +
+          'v-for="i in Array.from(Array(7 * 6), function (v, k) { return k })" ' +
+          ':key="i" ' +
+          ':index="i" ' +
+          ':offset="offset" ' +
+          ':lastdate="lastdate" ' +
+          ':lastdateofprevmonth="lastdateofprevmonth"' +
+          'class="mcalendar-table-cell" ' +
+        '></mcalendar-table-cell>' +
+      '</div>' +
     '</div>',
   components: {
     'mcalendar-table-cell': mcalendartablecell,

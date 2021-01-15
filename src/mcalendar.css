@@ -1,5 +1,6 @@
 .mcalendar {
   width: 320px;
+  margin: 20px;
 }
 .mcalendar-nav select {
   width: 90px;
@@ -9,11 +10,25 @@
   display: inline-block;
   width: 14.25%;
   height: 30px;
+  text-align: center;
 }
 
 .mcalendar-table-cell {
   display: inline-block;
   width: 14.25%;
   height: 30px;
+  text-align: center;
+  border-top: 1px solid #333333;
+  border-left: 1px solid #333333;
 }
+
+.mcalendar-table-cell:nth-child(7n) {
+  border-right: 1px solid #333333;
+}
+
+.lastrow {
+  border-bottom: 1px solid #333333;
+}
+
+
 
