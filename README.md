@@ -1,6 +1,6 @@
 # monthly-calendar
 
-## Prototyping of Montyly Calendar
+## Prototyping of Monthly Calendar
 
 This is a prototype for building any type of Calendar such as Monthly(matrix), Monthly(sequential), 2-weeks, weekly.  
 
