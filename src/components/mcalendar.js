@@ -68,6 +68,46 @@ var mcalendarnav = {
   }
 };
 
+var mcalendartablecell = {
+  props: {
+    index: { type: Number, required: true },
+    offset: { type: Number, required: true },
+    lastdate: { type: Number, required: true },
+    lastdateofprevmonth: { type: Number, required: true }
+  },
+  template: '' +
+    '<div ' +
+      'class="mcalendar-table-cell" ' +
+      ':class="[{ outofmonth: isoutofmonth }, { lastrow: islastrow }]"' +
+    '>' +
+      '<div>' +
+        '<div>' +
+          '<span class="date">{{ displaydate }}</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>',
+  computed: {
+    islastrow () {
+      var indexoflastdate = this.lastdate - this.offset;
+      return (Math.floor(this.index / 7) === Math.floor(indexoflastdate / 7));
+    },
+    isoutofmonth () {
+      return ((this.index + this.offset) <= 0 || this.lastdate < (this.index + this.offset));
+    },
+    displaydate () {
+      var dispdate = this.index + this.offset;
+      console.log(this.index);
+      console.log(this.offset);
+      if (dispdate <= 0) {
+        dispdate += this.lastdateofprevmonth;
+      } else if (this.lastdate < dispdate) {
+        dispdate -= this.lastdate;
+      }
+      return dispdate;
+    }
+  }
+}
+
 var mcalendartable = {
   props: {
     offset: { type: Number, required: true },
@@ -76,10 +116,10 @@ var mcalendartable = {
     lastdateofprevmonth: { type: Number, required: true }
   },
   template: '' +
-    '<div class="mcalendar-table">' +
+    '<div>' +
       '<div ' +
         'v-for="h in dowheader" ' +
-        ':key="h.key" ' +
+        ':key="100 + h.key" ' +
         'class="dowheader"' +
       '>' +
         '{{ h.val }}' +
@@ -88,7 +128,19 @@ var mcalendartable = {
       '<p>firstdayofweek: {{ firstdayofweek }}</p>' +
       '<p>lastdate: {{ lastdate }}</p>' +
       '<p>lastdateofprevmonth: {{ lastdateofprevmonth }}</p>' +
+      '<mcalendar-table-cell ' +
+        'v-for="i in Array.from(Array(7 * 6), function (v, k) { return k })" ' +
+        ':key="i" ' +
+        ':index="i" ' +
+        ':offset="offset" ' +
+        ':lastdate="lastdate" ' +
+        ':lastdateofprevmonth="lastdateofprevmonth"' +
+        'class="mcalendar-table-cell" ' +
+      '></mcalendar-table-cell>' +
     '</div>',
+  components: {
+    'mcalendar-table-cell': mcalendartablecell,
+  },
   data: function () {
     return {
       dowheader: [
@@ -133,17 +185,23 @@ var mcalendar = {
       offset: 0,
       firstdayofweek: 0,
       lastdate: 30,
-      lastdateofprevmonth: 30
+      lastdateofprevmonth: 30,
+      begindow: 0
     }
   },
   methods: {
     monthchanged ( to ) {
-      this.updatemonthparams( to )
+      this.updatemonthparams( this, to )
     },
-    updatemonthparams ( to ) {
+    updatemonthparams ( self, to ) {
       console.log('month changed to year:' + to.year + ', month:' + to.month);
       self.year = to.year
       self.month = to.month
+      // month param for Date constructor takes (month - 1). Last date of the month is 0th day of next month
+      self.lastdateofprevmonth = new Date(to.year, to.month - 1, 0).getDate();
+      self.lastdate = new Date(to.year, to.month, 0).getDate();
+      self.firstdayofweek = new Date(to.year, to.month - 1, 1).getDay();
+      self.offset = ((self.begindow > self.firstdayofweek) ? -7 : 0) + (self.begindow - self.firstdayofweek) + 1;
     }
   }
 };

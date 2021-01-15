@@ -1,10 +1,19 @@
+.mcalendar {
+  width: 320px;
+}
 .mcalendar-nav select {
   width: 90px;
 }
 
 .dowheader {
   display: inline-block;
-  width: 45px;
+  width: 14.25%;
+  height: 30px;
+}
+
+.mcalendar-table-cell {
+  display: inline-block;
+  width: 14.25%;
   height: 30px;
 }
 
