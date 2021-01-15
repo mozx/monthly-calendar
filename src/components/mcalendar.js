@@ -62,7 +62,8 @@ var mcalendarnav = {
       this.changed();
     },
     changed () {
-      console.log('year or month changed');
+      console.log('monthchanged: ' + this.year + '-' + this.month);
+      this.$emit('monthchanged', { year: this.year, month: this.month });
     }
   }
 };
@@ -73,11 +74,20 @@ var mcalendar = {
   },
   template: '' +
     '<div class="mcalendar">' +
-      '<mcalendar-nav :startyear="startyear" class="mcalendar-nav"></mcalendar-nav>' +
+      '<mcalendar-nav ' +
+        ':startyear="startyear" ' +
+        'class="mcalendar-nav" ' +
+        '@monthchanged="monthchanged"' +
+      '></mcalendar-nav>' +
       '<div class="mcalendar-table">Calendar Table</div>' +
     '</div>',
   components: {
     'mcalendar-nav': mcalendarnav
+  },
+  methods: {
+    monthchanged ( to ) {
+      console.log('month changed to year:' + to.year + ', month:' + to.month);
+    }
   }
 };
 
