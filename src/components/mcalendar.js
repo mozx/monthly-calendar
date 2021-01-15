@@ -63,7 +63,7 @@ var mcalendarnav = {
     this.year = today.getFullYear();
     this.month = today.getMonth() + 1;
     this.yearoptions.length = 0;
-    for (var y = today.getFullYear(); y >= this.startyear; y -= 1) {
+    for (var y = today.getFullYear() + 1; y >= this.startyear; y -= 1) {
       this.yearoptions.push({ value: y, text: y.toString() });
     }
     this.monthoptions.length = 0;
@@ -75,6 +75,10 @@ var mcalendarnav = {
   },
   methods: {
     increment () {
+      var nextyear = new Date().getFullYear() + 1;
+      if (this.year === nextyear && this.month === 12) {
+        return;
+      }
       this.month += 1;
       if (this.month > 12) {
         this.year += 1;
