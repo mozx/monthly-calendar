@@ -126,16 +126,17 @@ var mcalendartable = {
     offset: { type: Number, required: true },
     firstdayofweek: { type: Number, required: true },
     lastdate: { type: Number, required: true },
-    lastdateofprevmonth: { type: Number, required: true }
+    lastdateofprevmonth: { type: Number, required: true },
   },
   template: '' +
     '<div>' +
       '<div ' +
-        'v-for="h in dowheaderlabel" ' +
+        'v-for="h in dowheader" ' +
         ':key="100 + h.key" ' +
-        'class="dowheader"' +
+        'class="dowheader" ' +
+        ':class="\'dow\' + h.val"' +
       '>' +
-        '{{ h.val }}' +
+        '{{ dowheaderlabel[h.val] }}' +
       '</div>' +
       '<div>' +
         '<mcalendar-table-cell ' +
@@ -154,15 +155,7 @@ var mcalendartable = {
   },
   data: function () {
     return {
-      dowheaderlabel: [
-        { key: 0, val: 'Sun' },
-        { key: 1, val: 'Mon' },
-        { key: 2, val: 'Tue' },
-        { key: 3, val: 'Wed' },
-        { key: 4, val: 'Thu' },
-        { key: 5, val: 'Fri' },
-        { key: 6, val: 'Sat' }
-      ]
+      dowheaderlabel: [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ]
     }
   }
 }
@@ -218,7 +211,7 @@ var mcalendar = {
     },
     dowchanged ( dow ) {
       var dowindices = [0, 1, 2, 3, 4, 5, 6];
-      var dowheader = dowindices.slice(0, 7);
+      var dowheader = dowindices.slice(dow, 7).concat(dowindices.slice(0, dow));
       this.dowheader.length = 0;
       for (var i = 0; i < 7; i += 1) {
         this.dowheader.push({ key: i, val: dowheader[i] })
