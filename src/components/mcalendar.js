@@ -77,6 +77,7 @@ var mcalendartablecell = {
   },
   template: '' +
     '<div ' +
+      'v-if="isvisiblerow" ' +
       'class="mcalendar-table-cell" ' +
       ':class="[{ outofmonth: isoutofmonth }, { lastrow: islastrow }]"' +
     '>' +
@@ -87,6 +88,9 @@ var mcalendartablecell = {
       '</div>' +
     '</div>',
   computed: {
+    isvisiblerow () {
+      return ((( Math.floor(this.index / 7) * 7) + this.offset) <= this.lastdate)
+    },
     islastrow () {
       var indexoflastdate = this.lastdate - this.offset;
       return (Math.floor(this.index / 7) === Math.floor(indexoflastdate / 7));
