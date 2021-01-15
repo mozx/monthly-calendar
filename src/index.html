@@ -7,6 +7,7 @@
     <title>Monthly Calendar</title>
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="mcalendar.css" />
     <style>
       [v-cloak] {
         display: none;
@@ -16,7 +17,7 @@
   <body>
     <div id="app" v-cloak>
       <h1>{{ message }}</h1>
-      <mcalendar startyear="2017"><mcalendar>
+      <mcalendar :startyear="startyear"><mcalendar>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
@@ -26,7 +27,8 @@
       var app = new Vue({
         el: '#app',
         data: {
-          message: 'Monthly Calendar'
+          message: 'Monthly Calendar',
+          startyear: 2017
         },
         components: {
           mcalendar: mcalendar
