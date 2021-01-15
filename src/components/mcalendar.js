@@ -68,6 +68,42 @@ var mcalendarnav = {
   }
 };
 
+var mcalendartable = {
+  props: {
+    offset: { type: Number, required: true },
+    firstdayofweek: { type: Number, required: true },
+    lastdate: { type: Number, required: true },
+    lastdateofprevmonth: { type: Number, required: true }
+  },
+  template: '' +
+    '<div class="mcalendar-table">' +
+      '<div ' +
+        'v-for="h in dowheader" ' +
+        ':key="h.key" ' +
+        'class="dowheader"' +
+      '>' +
+        '{{ h.val }}' +
+      '</div>' +
+      '<p>offset: {{ offset }}</p>' +
+      '<p>firstdayofweek: {{ firstdayofweek }}</p>' +
+      '<p>lastdate: {{ lastdate }}</p>' +
+      '<p>lastdateofprevmonth: {{ lastdateofprevmonth }}</p>' +
+    '</div>',
+  data: function () {
+    return {
+      dowheader: [
+        { key: 0, val: 'Sun' },
+        { key: 1, val: 'Mon' },
+        { key: 2, val: 'Tue' },
+        { key: 3, val: 'Wed' },
+        { key: 4, val: 'Thu' },
+        { key: 5, val: 'Fri' },
+        { key: 6, val: 'Sat' }
+      ]
+    }
+  }
+}
+
 var mcalendar = {
   props: {
     startyear: { type: Number, required: true }
@@ -79,14 +115,35 @@ var mcalendar = {
         'class="mcalendar-nav" ' +
         '@monthchanged="monthchanged"' +
       '></mcalendar-nav>' +
-      '<div class="mcalendar-table">Calendar Table</div>' +
+      '<mcalendar-table class="mcalendar-table"' +
+        ':offset="offset" ' +
+        ':firstdayofweek="firstdayofweek" ' +
+        ':lastdate="lastdate" ' +
+        ':lastdateofprevmonth="lastdateofprevmonth"' +
+      '></mcalendar-table>' +
     '</div>',
   components: {
-    'mcalendar-nav': mcalendarnav
+    'mcalendar-nav': mcalendarnav,
+    'mcalendar-table': mcalendartable
+  },
+  data: function () {
+    return {
+      year: this.startyear,
+      month: 1,
+      offset: 0,
+      firstdayofweek: 0,
+      lastdate: 30,
+      lastdateofprevmonth: 30
+    }
   },
   methods: {
     monthchanged ( to ) {
+      this.updatemonthparams( to )
+    },
+    updatemonthparams ( to ) {
       console.log('month changed to year:' + to.year + ', month:' + to.month);
+      self.year = to.year
+      self.month = to.month
     }
   }
 };
