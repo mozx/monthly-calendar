@@ -9,12 +9,14 @@ var mcalendarnav = {
         '<b-form-select ' +
           'v-model="year" ' +
           ':options="yearoptions" ' +
-          '@change="changed">' +
+          '@change="changed"' +
+        '>' +
         '</b-form-select>' +
         '<b-form-select ' +
           'v-model="month" ' +
           ':options="monthoptions" ' +
-          '@change="changed">' +
+          '@change="changed"' +
+        '>' +
         '</b-form-select>' +
         '<b-button @click="increment">Next</b-button>' +
       '</div>' +
@@ -38,6 +40,17 @@ var mcalendarnav = {
           'Show dates of previous/next month' +
         '</b-form-checkbox>' +
       '</div>' +
+      '<div>' +
+        '<b-form-group label="Day Of Week Header">' +
+          '<b-form-radio-group ' +
+            'v-model="dowlang" ' +
+            ':options="dowlangoptions" ' +
+            'buttons ' +
+            'button-variant="outline-primary" ' +
+            '@change="dowlangchanged"' +
+          '/>' +
+        '</b-form-group>' +
+      '</div>' +
     '</div>',
   data () {
     return {
@@ -55,6 +68,12 @@ var mcalendarnav = {
         { text: 'Thu', value: 4 },
         { text: 'Fri', value: 5 },
         { text: 'Sat', value: 6 }
+      ],
+      dowlang: 'en',
+      dowlangoptions: [
+        { text: 'None', value: '' },
+        { text: 'English', value: 'en' },
+        { text: 'Japanese', value: 'ja' }
       ]
     }
   },
@@ -72,6 +91,8 @@ var mcalendarnav = {
     }
     this.changed();
     this.dowchanged();
+    this.showoutofmonthchanged();
+    this.dowlangchanged();
   },
   methods: {
     increment () {
@@ -108,6 +129,9 @@ var mcalendarnav = {
     showoutofmonthchanged () {
       var val = this.showoutofmonth;
       this.$emit('showoutofmonthchanged', val);
+    },
+    dowlangchanged () {
+      this.$emit('dowlangchanged', this.dowlang);
     }
   }
 };
@@ -169,17 +193,20 @@ var mcalendartable = {
     lastdate: { type: Number, required: true },
     lastdateofprevmonth: { type: Number, required: true },
     showoutofmonth: { type: Boolean, default: true },
-    holidays: { type: Object, default: () => ({}) }
+    holidays: { type: Object, default: () => ({}) },
+    dowlang: { type: String, default: '' }
   },
   template: '' +
     '<div>' +
-      '<div ' +
-        'v-for="h in dowheader" ' +
-        ':key="100 + h.key" ' +
-        'class="dowheader" ' +
-        ':class="\'dow\' + h.val"' +
-      '>' +
-        '{{ dowheaderlabel[h.val] }}' +
+      '<div v-if="dowlang !== \'\'">' +
+        '<div ' +
+          'v-for="h in dowheader" ' +
+          ':key="100 + h.key" ' +
+          'class="dowheader" ' +
+          ':class="\'dow\' + h.val"' +
+        '>' +
+          '{{ dowheaderlabel[dowlang][h.val] }}' +
+        '</div>' +
       '</div>' +
       '<div>' +
         '<mcalendar-table-cell ' +
@@ -200,7 +227,11 @@ var mcalendartable = {
   },
   data: function () {
     return {
-      dowheaderlabel: [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ]
+      dowheaderlabel: {
+        '': [ '', '', '', '', '', '', '' ],
+        'en': [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
+        'ja': [ '日', '月', '火', '水', '木', '金', '土' ]
+      }
     }
   }
 }
@@ -215,7 +246,8 @@ var mcalendar = {
         ':startyear="startyear" ' +
         '@monthchanged="monthchanged" ' +
         '@dowchanged="dowchanged" ' +
-        '@showoutofmonthchanged="showoutofmonthchanged"' +
+        '@showoutofmonthchanged="showoutofmonthchanged" ' +
+        '@dowlangchanged="dowlangchanged"' +
       '></mcalendar-nav>' +
       '<mcalendar-table ' +
         ':dowheader="dowheader" ' +
@@ -224,7 +256,8 @@ var mcalendar = {
         ':lastdate="lastdate" ' +
         ':lastdateofprevmonth="lastdateofprevmonth" ' +
         ':showoutofmonth="showoutofmonth" ' +
-        ':holidays="holidays"' +
+        ':holidays="holidays" ' +
+        ':dowlang="dowlang"' +
       '></mcalendar-table>' +
     '</div>',
   components: {
@@ -243,10 +276,11 @@ var mcalendar = {
       begindow: 0,
       showoutofmonth: true,
       allholidays: {},
-      holidays: {}
+      holidays: {},
+      dowlang: ''
     }
   },
-  beforeCreate () {
+  mounted () {
     // It may require to disable web security
     var self = this
     axios
@@ -292,6 +326,10 @@ var mcalendar = {
     },
     showoutofmonthchanged (val) {
       this.showoutofmonth = val;
+    },
+    dowlangchanged ( dowlang ) {
+      console.log('dowlangchanged: ' + dowlang);
+      this.dowlang = dowlang
     }
   }
 };
