@@ -4,6 +4,7 @@ var mcalendarnav = {
   },
   template: '' +
     '<div class="mcalendar-nav">' +
+      // CalendarNav main part
       '<div>' +
         '<b-button @click="decrement">Prev</b-button>' +
         '<b-form-select ' +
@@ -20,6 +21,8 @@ var mcalendarnav = {
         '</b-form-select>' +
         '<b-button @click="increment">Next</b-button>' +
       '</div>' +
+      // Auxiliary nav control for debugging
+      // Selection Start Day Of Week
       '<div>' +
         '<b-form-group label="Start Day Of Week">' +
           '<b-form-radio-group ' +
@@ -31,6 +34,7 @@ var mcalendarnav = {
           '/>' +
         '</b-form-group>' +
       '</div>' +
+      // Toggle Show Out Of Month
       '<div>' +
         '<b-form-checkbox ' +
           'v-model="showoutofmonth" ' +
@@ -40,6 +44,7 @@ var mcalendarnav = {
           'Show dates of previous/next month' +
         '</b-form-checkbox>' +
       '</div>' +
+      // Selection Day Of Week header language
       '<div>' +
         '<b-form-group label="Day Of Week Header">' +
           '<b-form-radio-group ' +
