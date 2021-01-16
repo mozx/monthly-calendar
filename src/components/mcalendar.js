@@ -119,7 +119,8 @@ var mcalendartablecell = {
     lastdate: { type: Number, required: true },
     lastdateofprevmonth: { type: Number, required: true },
     dow: { type: Object, default: function () { return { key: 0, val: 0 } } },
-    showoutofmonth: { type: Boolean, default: true }
+    showoutofmonth: { type: Boolean, default: true },
+    holidays: { type: Object, default: () => ({}) }
   },
   template: '' +
     '<div ' +
@@ -130,6 +131,7 @@ var mcalendartablecell = {
       '<div v-if="! isoutofmonth || showoutofmonth">' +
         '<div>' +
           '<span class="date" :class="datecolorclass">{{ displaydate }}</span>' +
+          '<span class="holiday">{{ (holidays[index + offset] || \'\') }}</span>' +
         '</div>' +
       '</div>' +
     '</div>',
@@ -145,7 +147,7 @@ var mcalendartablecell = {
       return ((this.index + this.offset) <= 0 || this.lastdate < (this.index + this.offset));
     },
     datecolorclass () {
-      return 'dow' + this.dow.val;
+      return 'dow' + (this.holidays[this.index + this.offset] ? '0' : this.dow.val);
     },
     displaydate () {
       var dispdate = this.index + this.offset;
@@ -166,7 +168,8 @@ var mcalendartable = {
     firstdayofweek: { type: Number, required: true },
     lastdate: { type: Number, required: true },
     lastdateofprevmonth: { type: Number, required: true },
-    showoutofmonth: { type: Boolean, default: true }
+    showoutofmonth: { type: Boolean, default: true },
+    holidays: { type: Object, default: () => ({}) }
   },
   template: '' +
     '<div>' +
@@ -187,7 +190,8 @@ var mcalendartable = {
           ':lastdate="lastdate" ' +
           ':lastdateofprevmonth="lastdateofprevmonth" ' +
           ':dow="dowheader[i % 7]" ' +
-          ':showoutofmonth="showoutofmonth"' +
+          ':showoutofmonth="showoutofmonth" ' +
+          ':holidays="holidays"' +
         '></mcalendar-table-cell>' +
       '</div>' +
     '</div>',
@@ -219,7 +223,8 @@ var mcalendar = {
         ':firstdayofweek="firstdayofweek" ' +
         ':lastdate="lastdate" ' +
         ':lastdateofprevmonth="lastdateofprevmonth" ' +
-        ':showoutofmonth="showoutofmonth"' +
+        ':showoutofmonth="showoutofmonth" ' +
+        ':holidays="holidays"' +
       '></mcalendar-table>' +
     '</div>',
   components: {
@@ -236,8 +241,29 @@ var mcalendar = {
       lastdate: 30,
       lastdateofprevmonth: 30,
       begindow: 0,
-      showoutofmonth: true
+      showoutofmonth: true,
+      allholidays: {},
+      holidays: {}
     }
+  },
+  beforeCreate () {
+    // It may require to disable web security
+    var self = this
+    axios
+      .get('holidays/holidays.json')
+      .then ( function (response) {
+        console.log('response.data: ' + JSON.stringify(response.data));
+        self.allholidays = response.data
+        self.holidays = self.allholidays[self.year.toString()][self.month.toString()];
+        console.log('self.holidays: ' + JSON.stringify(self.holidays));
+      })
+      .catch ( function (error) {
+        console.log(error);
+      })
+      .finally ( function () {
+        console.log('finally');
+        console.log('self.allholidays: ' + JSON.stringify(self.allholidays));
+      })
   },
   methods: {
     monthchanged ( to ) {
@@ -252,6 +278,8 @@ var mcalendar = {
       self.lastdate = new Date(to.year, to.month, 0).getDate();
       self.firstdayofweek = new Date(to.year, to.month - 1, 1).getDay();
       self.offset = ((self.begindow > self.firstdayofweek) ? -7 : 0) + (self.begindow - self.firstdayofweek) + 1;
+      self.holidays = (Object.keys(self.allholidays).length > 0) ? self.allholidays[self.year][self.month] : {};
+      console.log('self.holidays: ' + JSON.stringify(self.holidays));
     },
     dowchanged ( dow ) {
       var dowindices = [0, 1, 2, 3, 4, 5, 6];

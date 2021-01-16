@@ -1,9 +1,19 @@
 .mcalendar {
-  width: 320px;
+  width: 600px;
   margin: 20px;
 }
+
 .mcalendar-nav select {
   width: 90px;
+}
+
+.date {
+  font-size: 16px;
+  margin-right: 3px;
+}
+
+.holiday {
+  font-size: 12px;
 }
 
 .dowheader {
@@ -26,7 +36,7 @@
   display: inline-block;
   vertical-align: top;
   width: 14.25%;
-  height: 30px;
+  height: 50px;
   text-align: center;
   border-top: 1px solid #333333;
   border-left: 1px solid #333333;
@@ -40,18 +50,23 @@
   border-bottom: 1px solid #333333;
 }
 
+.holiday,
 .dow0 {
   color: #F75555;
 }
+
 .dow1, .dow2, .dow3, .dow4, .dow5 {
   color: #330000;
 }
+
 .dow6 {
   color: #5555F7;
 }
+
 .outofmonth .dow0 {
   color: #F7AAAA;
 }
+
 .outofmonth .dow1,
 .outofmonth .dow2,
 .outofmonth .dow3,
@@ -59,6 +74,7 @@
 .outofmonth .dow5 {
   color: #AAAAAA;
 }
+
 .outofmonth .dow6 {
   color: #9999F7;
 }
