@@ -327,6 +327,9 @@ var mcalendar = {
       for (var i = 0; i < 7; i += 1) {
         this.dowheader.push({ key: i, val: dowheader[i] })
       }
+      this.begindow = dow;
+      this.offset = ((this.begindow > this.firstdayofweek) ? -7 : 0) + (this.begindow - this.firstdayofweek) + 1;
+      console.log('this.offset: ' + this.offset);
       console.log('dowheader' + JSON.stringify(this.dowheader));
     },
     showoutofmonthchanged (val) {
