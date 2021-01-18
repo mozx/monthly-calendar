@@ -166,14 +166,27 @@ var mcalendartablecell = {
     '</div>',
   computed: {
     isvisiblerow () {
-      return ((( Math.floor(this.index / 7) * 7) + this.offset) <= this.lastdate)
+      var indexoflastdate = this.lastdate - this.offset;
+      var vrow = this.row(this.index) <= this.row(indexoflastdate);
+      var vrow_old = ((( Math.floor(this.index / 7) * 7) + this.offset) <= this.lastdate);
+      if (vrow_old != vrow) {
+        console.log('isvisiblerow (old): ' + vrow_old + ', (new): ' + vrow);
+      }
+      return vrow;
     },
     islastrow () {
       var indexoflastdate = this.lastdate - this.offset;
-      return (Math.floor(this.index / 7) === Math.floor(indexoflastdate / 7));
+      var lrow = this.row(this.index) === this.row(indexoflastdate);
+      var lrow_old = (Math.floor(this.index / 7) === Math.floor(indexoflastdate / 7));
+      if (lrow_old != lrow) {
+        console.log('islastrow (old): ' + lrow_old + ', (new): ' + lrow);
+      }
+      return lrow;
     },
     isoutofmonth () {
-      return ((this.index + this.offset) <= 0 || this.lastdate < (this.index + this.offset));
+      var islastmonth = ((this.index + this.offset) <= 0);
+      var isnextmonth = (this.lastdate < (this.index + this.offset))
+      return (islastmonth || isnextmonth);
     },
     datecolorclass () {
       return 'dow' + (this.holidays[this.index + this.offset] ? '0' : this.dow.val);
@@ -186,6 +199,11 @@ var mcalendartablecell = {
         dispdate -= this.lastdate;
       }
       return dispdate;
+    }
+  },
+  methods: {
+    row (index) {
+      return Math.floor(index / 7);
     }
   }
 }
