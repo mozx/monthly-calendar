@@ -323,13 +323,17 @@ var mcalendar = {
     dowchanged ( dow ) {
       var dowindices = [0, 1, 2, 3, 4, 5, 6];
       var dowheader = dowindices.slice(dow, 7).concat(dowindices.slice(0, dow));
-      this.dowheader.length = 0;
+      var dowheader2 = [];
       for (var i = 0; i < 7; i += 1) {
-        this.dowheader.push({ key: i, val: dowheader[i] })
+        dowheader2.push({ key: i, val: dowheader[i] })
       }
+      console.log('dowheader2: ' + JSON.stringify(dowheader2));
       this.begindow = dow;
       this.offset = ((this.begindow > this.firstdayofweek) ? -7 : 0) + (this.begindow - this.firstdayofweek) + 1;
       console.log('this.offset: ' + this.offset);
+      this.dowheader = Array.from(Array(7), function ( v, k ) {
+        return { key: k, val: (k + dow) % 7 }
+      })
       console.log('dowheader' + JSON.stringify(this.dowheader));
     },
     showoutofmonthchanged (val) {
