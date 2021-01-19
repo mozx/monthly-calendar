@@ -334,7 +334,8 @@ var mcalendar = {
       self.lastdateofprevmonth = new Date(to.year, to.month - 1, 0).getDate();
       self.lastdate = new Date(to.year, to.month, 0).getDate();
       self.firstdayofweek = new Date(to.year, to.month - 1, 1).getDay();
-      self.offset = ((self.begindow > self.firstdayofweek) ? -7 : 0) + (self.begindow - self.firstdayofweek) + 1;
+      // self.offset = ((self.begindow > self.firstdayofweek) ? -7 : 0) + (self.begindow - self.firstdayofweek) + 1;
+      self.offset = 1 - ((self.firstdayofweek - self.begindow + 7) % 7)
       self.holidays = (Object.keys(self.allholidays).length > 0) ? self.allholidays[self.year][self.month] : {};
       console.log('self.holidays: ' + JSON.stringify(self.holidays));
     },
@@ -347,7 +348,8 @@ var mcalendar = {
       }
       console.log('dowheader2: ' + JSON.stringify(dowheader2));
       this.begindow = dow;
-      this.offset = ((this.begindow > this.firstdayofweek) ? -7 : 0) + (this.begindow - this.firstdayofweek) + 1;
+      // this.offset = ((this.begindow > this.firstdayofweek) ? -7 : 0) + (this.begindow - this.firstdayofweek) + 1;
+      this.offset = 1 - ((this.firstdayofweek - this.begindow + 7) % 7)
       console.log('this.offset: ' + this.offset);
       this.dowheader = Array.from(Array(7), function ( v, k ) {
         return { key: k, val: (k + dow) % 7 }
